@@ -8,33 +8,22 @@
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Configuration -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        dark: {
-                            900: '#121212',
-                            800: '#1E1E1E',
-                            700: '#2C2C2C',
-                        },
-                        neon: {
-                            500: '#00f2ff',
-                            600: '#00c3cc',
-                        },
-                        purple: {
-                            500: '#bb86fc',
-                        }
+                        dark: { 900: '#121212', 800: '#1E1E1E', 700: '#2C2C2C' },
+                        neon: { 500: '#00f2ff', 600: '#00c3cc' },
+                        purple: { 500: '#bb86fc' }
                     }
                 }
             }
@@ -42,132 +31,79 @@
     </script>
 
     <style>
-        /* Custom Styles */
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            touch-action: manipulation; /* Improves touch response */
-        }
-        
-        .game-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .game-btn:active {
-            transform: scale(0.95);
-        }
-
-        .card-flip {
-            perspective: 1000px;
-        }
-        
-        .front, .back {
-            backface-visibility: hidden;
-            transition: transform 0.6s;
-        }
-        
-        .back {
-            transform: rotateY(180deg);
-        }
-        
-        .flipped .front {
-            transform: rotateY(180deg);
-        }
-        
-        .flipped .back {
-            transform: rotateY(0deg);
-        }
-
-        /* Hide scrollbar for clean look */
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
+        body { background-color: #121212; color: #ffffff; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        .game-btn:active { transform: scale(0.95); }
+        .card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+        .flipped .card-inner { transform: rotateY(180deg); }
+        .face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .back { transform: rotateY(180deg); }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="flex flex-col h-screen overflow-hidden max-w-md mx-auto border-x border-gray-800 shadow-2xl relative">
+<body class="flex flex-col h-screen overflow-hidden max-w-md mx-auto border-x border-gray-800 shadow-2xl relative bg-black">
 
     <!-- HEADER -->
-    <header class="h-14 bg-dark-800 flex items-center justify-between px-4 z-10 border-b border-gray-700">
-        <div id="header-title" class="font-bold text-lg text-white tracking-wide">
-            PlayHub
-        </div>
-        <button onclick="goHome()" class="text-gray-400 hover:text-white">
-            <i class="fa-solid fa-house text-xl"></i>
-        </button>
+    <header class="h-14 bg-dark-800 flex items-center justify-between px-4 z-20 border-b border-gray-700 shadow-lg">
+        <div id="header-title" class="font-bold text-lg text-white tracking-wide">PlayHub</div>
+        <button onclick="goHome()" class="text-gray-400 hover:text-white transition"><i class="fa-solid fa-house text-xl"></i></button>
     </header>
 
     <!-- MAIN CONTENT AREA -->
-    <main id="app-container" class="flex-1 overflow-y-auto p-4 relative w-full">
-        
-        <!-- 1. LOGIN / REGISTER SECTION -->
-        <section id="login-section" class="h-full flex flex-col justify-center items-center text-center fade-in">
-            <div class="mb-8 text-neon-500">
-                <i class="fa-solid fa-gamepad text-6xl animate-pulse"></i>
-            </div>
+    <main id="app-container" class="flex-1 overflow-y-auto p-4 relative w-full bg-dark-900">
+
+        <!-- 1. LOGIN SECTION -->
+        <section id="login-section" class="h-full flex flex-col justify-center items-center text-center fade-in absolute inset-0 bg-dark-900 p-4 z-10">
+            <div class="mb-8 text-neon-500"><i class="fa-solid fa-gamepad text-6xl animate-pulse"></i></div>
             <h1 class="text-3xl font-bold text-white mb-2">Welcome</h1>
             <p class="text-gray-400 mb-8">Enter your mobile number to start</p>
             
-            <div class="w-full max-w-xs">
-                <div class="bg-dark-800 rounded-xl p-1 flex items-center border border-gray-700 focus-within:border-neon-500">
+            <div class="w-full max-w-xs relative">
+                <div class="bg-dark-800 rounded-xl p-1 flex items-center border border-gray-700 focus-within:border-neon-500 transition">
                     <span class="pl-3 text-gray-400">+91</span>
-                    <input type="tel" id="mobile-number" placeholder="Mobile Number" class="w-full bg-transparent text-white p-3 outline-none" inputmode="numeric">
+                    <input type="tel" id="mobile-input" placeholder="Mobile Number" class="w-full bg-transparent text-white p-3 outline-none" inputmode="numeric">
                 </div>
-                <button onclick="handleLogin()" class="w-full mt-6 bg-neon-600 hover:bg-neon-500 text-black font-bold py-3 rounded-xl transition shadow-lg shadow-neon-500/20">
+                <button onclick="handleLogin()" class="w-full mt-6 bg-neon-600 hover:bg-neon-500 text-black font-bold py-3 rounded-xl transition shadow-lg shadow-neon-500/20 active:scale-95">
                     Get Started
                 </button>
             </div>
             <p class="mt-6 text-xs text-gray-600">No password required. Just play!</p>
         </section>
 
-
         <!-- 2. LOBBY SECTION -->
-        <section id="lobby-section" class="hidden h-full fade-in">
-            <div class="grid grid-cols-2 gap-4">
-                
-                <!-- Game 1: Tic Tac Toe -->
-                <div onclick="loadGame('tictactoe')" class="game-btn bg-gradient-to-br from-purple-900 to-purple-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg">
+        <section id="lobby-section" class="hidden absolute inset-0 bg-dark-900 p-4 fade-in z-0 overflow-y-auto">
+            <div class="grid grid-cols-2 gap-4 pb-24">
+                <div onclick="loadGame('tictactoe')" class="game-btn bg-gradient-to-br from-purple-900 to-purple-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg active:scale-95 transition">
                     <i class="fa-regular fa-circle text-4xl mb-3 text-purple-300"></i>
                     <span class="font-bold text-center">Tic-Tac-Toe</span>
                 </div>
-
-                <!-- Game 2: RPS -->
-                <div onclick="loadGame('rps')" class="game-btn bg-gradient-to-br from-pink-900 to-pink-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg">
+                <div onclick="loadGame('rps')" class="game-btn bg-gradient-to-br from-pink-900 to-pink-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg active:scale-95 transition">
                     <i class="fa-solid fa-hand-fist text-4xl mb-3 text-pink-300"></i>
                     <span class="font-bold text-center">Rock Paper Scissors</span>
                 </div>
-
-                <!-- Game 3: Memory -->
-                <div onclick="loadGame('memory')" class="game-btn bg-gradient-to-br from-emerald-900 to-emerald-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg">
+                <div onclick="loadGame('memory')" class="game-btn bg-gradient-to-br from-emerald-900 to-emerald-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg active:scale-95 transition">
                     <i class="fa-regular fa-clone text-4xl mb-3 text-emerald-300"></i>
                     <span class="font-bold text-center">Memory Card</span>
                 </div>
-
-                <!-- Game 4: Number Guess -->
-                <div onclick="loadGame('numberguess')" class="game-btn bg-gradient-to-br from-blue-900 to-blue-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg">
+                <div onclick="loadGame('numberguess')" class="game-btn bg-gradient-to-br from-blue-900 to-blue-700 p-6 rounded-2xl flex flex-col items-center justify-center aspect-square cursor-pointer shadow-lg active:scale-95 transition">
                     <i class="fa-solid fa-hashtag text-4xl mb-3 text-blue-300"></i>
                     <span class="font-bold text-center">Number Guess</span>
                 </div>
-
             </div>
-            
-            <!-- User Info -->
-            <div class="mt-8 bg-dark-800 p-4 rounded-xl flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-gray-400">Logged in as</p>
-                    <p id="display-mobile" class="font-bold text-white">---</p>
+            <div class="fixed bottom-20 left-0 right-0 px-4 max-w-md mx-auto">
+                <div class="bg-dark-800 p-4 rounded-xl flex items-center justify-between border border-gray-700">
+                    <div><p class="text-xs text-gray-400">Logged in as</p><p id="display-mobile" class="font-bold text-white">---</p></div>
+                    <button onclick="logout()" class="text-xs text-red-400 hover:text-red-300">Logout</button>
                 </div>
-                <button onclick="logout()" class="text-xs text-red-400 hover:text-red-300">Logout</button>
             </div>
         </section>
-
 
         <!-- GAME: Tic Tac Toe -->
-        <section id="game-tictactoe" class="hidden flex flex-col items-center justify-center h-full fade-in">
-            <h2 class="text-xl font-bold mb-4">Tic Tac Toe</h2>
+        <section id="game-tictactoe" class="hidden absolute inset-0 bg-dark-900 flex flex-col items-center justify-center p-4 fade-in z-0">
+            <h2 class="text-xl font-bold mb-2 text-white">Tic Tac Toe</h2>
             <div class="mb-4 text-sm text-gray-400" id="ttt-status">Player X's Turn</div>
-            
-            <div class="grid grid-cols-3 gap-2 bg-gray-700 p-2 rounded-lg">
+            <div class="grid grid-cols-3 gap-2 bg-gray-700 p-2 rounded-lg shadow-2xl">
                 <div onclick="playTTT(this)" class="cell w-20 h-20 bg-dark-800 rounded flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-700 text-white">-</div>
                 <div onclick="playTTT(this)" class="cell w-20 h-20 bg-dark-800 rounded flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-700 text-white">-</div>
                 <div onclick="playTTT(this)" class="cell w-20 h-20 bg-dark-800 rounded flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-700 text-white">-</div>
@@ -178,76 +114,84 @@
                 <div onclick="playTTT(this)" class="cell w-20 h-20 bg-dark-800 rounded flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-700 text-white">-</div>
                 <div onclick="playTTT(this)" class="cell w-20 h-20 bg-dark-800 rounded flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-700 text-white">-</div>
             </div>
-            <button onclick="resetTTT()" class="mt-6 px-6 py-2 bg-gray-700 rounded-full text-sm hover:bg-gray-600">Reset Game</button>
+            <button onclick="resetTTT()" class="mt-6 px-6 py-2 bg-gray-700 rounded-full text-sm hover:bg-gray-600 active:scale-95 transition">Reset Game</button>
         </section>
 
-
-        <!-- GAME: Rock Paper Scissors -->
-        <section id="game-rps" class="hidden flex flex-col items-center justify-center h-full fade-in">
-            <h2 class="text-xl font-bold mb-2">Rock Paper Scissors</h2>
+        <!-- GAME: RPS -->
+        <section id="game-rps" class="hidden absolute inset-0 bg-dark-900 flex flex-col items-center justify-center p-4 fade-in z-0">
+            <h2 class="text-xl font-bold mb-2 text-white">Rock Paper Scissors</h2>
             <p class="text-xs text-gray-400 mb-6">Choose your move</p>
-            
             <div class="flex gap-4 mb-8">
-                <button onclick="playRPS('rock')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 transition hover:-translate-y-1">
-                    <i class="fa-solid fa-hand-fist text-3xl mb-2 text-gray-300"></i>
-                    <span class="text-sm font-bold">Rock</span>
+                <button onclick="playRPS('rock')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 active:scale-95 transition hover:bg-gray-600">
+                    <i class="fa-solid fa-hand-fist text-3xl mb-2 text-gray-300"></i><span class="text-sm font-bold">Rock</span>
                 </button>
-                <button onclick="playRPS('paper')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 transition hover:-translate-y-1">
-                    <i class="fa-regular fa-hand text-3xl mb-2 text-white"></i>
-                    <span class="text-sm font-bold">Paper</span>
+                <button onclick="playRPS('paper')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 active:scale-95 transition hover:bg-gray-600">
+                    <i class="fa-regular fa-hand text-3xl mb-2 text-white"></i><span class="text-sm font-bold">Paper</span>
                 </button>
-                <button onclick="playRPS('scissors')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 transition hover:-translate-y-1">
-                    <i class="fa-solid fa-hand-scissors text-3xl mb-2 text-yellow-400"></i>
-                    <span class="text-sm font-bold">Scissors</span>
+                <button onclick="playRPS('scissors')" class="game-btn bg-gray-700 p-4 rounded-xl flex flex-col items-center w-24 active:scale-95 transition hover:bg-gray-600">
+                    <i class="fa-solid fa-hand-scissors text-3xl mb-2 text-yellow-400"></i><span class="text-sm font-bold">Scissors</span>
                 </button>
             </div>
-
-            <div class="bg-dark-800 p-6 rounded-xl w-full text-center border border-gray-700">
+            <div class="bg-dark-800 p-6 rounded-xl w-full text-center border border-gray-700 shadow-xl">
                 <div class="text-lg font-bold text-white mb-2" id="rps-result">Ready?</div>
                 <div class="flex justify-center gap-8 text-sm text-gray-400">
                     <div>You: <span id="rps-you" class="text-white font-bold">-</span></div>
                     <div>PC: <span id="rps-pc" class="text-white font-bold">-</span></div>
                 </div>
             </div>
-            
-            <div class="mt-6 flex gap-4">
-                <div class="text-center">
-                    <p class="text-xs text-gray-500">WINS</p>
-                    <p class="text-xl font-bold text-green-500" id="rps-score-win">0</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-xs text-gray-500">LOSS</p>
-                    <p class="text-xl font-bold text-red-500" id="rps-score-loss">0</p>
-                </div>
+            <div class="mt-6 flex gap-8">
+                <div class="text-center"><p class="text-xs text-gray-500">WINS</p><p class="text-xl font-bold text-green-500" id="rps-score-win">0</p></div>
+                <div class="text-center"><p class="text-xs text-gray-500">LOSS</p><p class="text-xl font-bold text-red-500" id="rps-score-loss">0</p></div>
             </div>
         </section>
 
-
-        <!-- GAME: Memory Card -->
-        <section id="game-memory" class="hidden flex flex-col items-center justify-center h-full fade-in">
-            <h2 class="text-xl font-bold mb-4">Memory Match</h2>
+        <!-- GAME: Memory -->
+        <section id="game-memory" class="hidden absolute inset-0 bg-dark-900 flex flex-col items-center justify-center p-4 fade-in z-0">
+            <h2 class="text-xl font-bold mb-2 text-white">Memory Match</h2>
             <p class="text-xs text-gray-400 mb-4">Find all pairs</p>
-            
-            <div id="memory-grid" class="grid grid-cols-4 gap-2 w-full max-w-xs">
-                <!-- Cards generated by JS -->
-            </div>
-            
+            <div id="memory-grid" class="grid grid-cols-4 gap-2 w-full max-w-xs"></div>
             <div class="mt-4 flex justify-between w-full max-w-xs text-sm">
-                <span class="text-gray-400">Moves: <span id="mem-moves" class="text-white">0</span></span>
-                <button onclick="initMemory()" class="text-neon-500 hover:text-neon-400">Restart</button>
+                <span class="text-gray-400">Moves: <span id="mem-moves" class="text-white font-bold">0</span></span>
+                <button onclick="initMemory()" class="text-neon-500 hover:text-neon-400 font-bold">Restart</button>
             </div>
         </section>
-
 
         <!-- GAME: Number Guess -->
-        <section id="game-numberguess" class="hidden flex flex-col items-center justify-center h-full fade-in">
-            <h2 class="text-xl font-bold mb-2">Guess the Number</h2>
-            <p class="text-xs text-gray-400 mb-8">1 - 100</p>
-            
-            <div class="relative w-32 h-32 rounded-full border-4 border-neon-500 flex items-center justify-center mb-8 shadow-[0_0_20px_rgba(0,242,255,0.3)]">
+        <section id="game-numberguess" class="hidden absolute inset-0 bg-dark-900 flex flex-col items-center justify-center p-4 fade-in z-0">
+            <h2 class="text-xl font-bold mb-2 text-white">Guess the Number</h2>
+            <p class="text-xs text-gray-400 mb-8">Between 1 - 100</p>
+            <div class="relative w-32 h-32 rounded-full border-4 border-neon-500 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,242,255,0.2)]">
                 <i class="fa-solid fa-question text-4xl text-white opacity-20 absolute"></i>
                 <span id="guess-feedback" class="text-3xl font-bold text-white">?</span>
             </div>
-            
             <div class="w-full max-w-xs bg-dark-800 p-4 rounded-xl border border-gray-700">
-                <input type="number" id="guess-input" placeholder="Enter 1-100" class="w-full bg-dark-900 text-white text-center p-2 rounded mb-2 outline-none border border-gray-600 focus:
+                <input type="number" id="guess-input" placeholder="Enter 1-100" class="w-full bg-dark-900 text-white text-center p-3 rounded mb-3 outline-none border border-gray-600 focus:border-neon-500 transition">
+                <button onclick="submitGuess()" class="w-full bg-neon-600 hover:bg-neon-500 text-black font-bold py-2 rounded transition">GUESS</button>
+            </div>
+            <button onclick="initNumberGuess()" class="mt-4 text-xs text-gray-500 hover:text-white">New Game</button>
+        </section>
+
+    </main>
+
+    <!-- Google AdSense Container -->
+    <footer class="h-20 bg-black border-t border-gray-800 flex items-center justify-center text-center p-2">
+        <div class="w-full h-full bg-dark-800 border border-dashed border-gray-700 flex flex-col items-center justify-center text-gray-600 text-xs">
+            <i class="fa-solid fa-ad mb-1"></i>
+            <p>Google AdSense Slot (320x50)</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let currentUser = null;
+        let tttTurn = true; // true = X, false = O
+        let tttBoard = ["", "", "", "", "", "", "", "", ""];
+        let rpsScoreWins = 0;
+        let rpsScoreLoss = 0;
+        let secretNumber = Math.floor(Math.random() * 100) + 1;
+
+        // --- NAVIGATION & LOGIN ---
+
+        function handleLogin() {
+            const input = document.getElementById('mobile-input').value;
+            if(input
